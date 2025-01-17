@@ -1,0 +1,8 @@
+# Node.js dependencies
+node_modules/
+
+# Image upload folder for processing
+uploads
+
+# Lock file
+package-lock.json

@@ -1,44 +1,52 @@
 # Book Creator Backend Engineer Candidate Technical Assessment
 
-The purpose of this test is mainly for us to get an idea of your technical capability. It will also serve as a starting point for discussions about how you think about and communicate the decisions you make when you write code, should you get through to the next stage.
+Using the Cloud Vision API face detection to overlay an emoji on a picture containing a face. (Looked the most fun of all the options!)
 
-## What is the task?
+##  Prerequisites
+Install gcloud CLI  (https://cloud.google.com/sdk/docs/install-sdk)
+Install Postman
 
-Your task is to write and deploy a minimal but interesting service using [Google Cloud's free tier](https://cloud.google.com/free). The only requirements are that you must:
-1. deploy this service to [Cloud Run](https://cloud.google.com/run/docs); and
-2. use one other Google Cloud service from the [free tier list](https://cloud.google.com/free/docs/free-cloud-features#free-tier-usage-limits).
+# Installation Instructions
 
-The easiest way to get going on this task will be to sign up for a Google Cloud free trial. This will require you to enter some billing details to confirm your identity. If you would rather not enter your billing details, or you have already used the Google Cloud free trial and your usage is beyond the free tier limits, then please email the person who sent you this test with details of a Google account that you control so that we can provision a project for you.
+npm install
 
-This is an intentionally vague requirement - we're excited to see what you come up with. To kick start your thinking, here are some ideas. Feel free to pick one of these if your creative juices aren't flowing today.
+# How to use
+There is an example postman export within the solution to get you started.
 
-Make an API that can:
-1. Use the [Cloud Vision API face detection](https://cloud.google.com/vision/docs/detecting-faces) to overlay an emoji on a picture containing a face.
-2. Use the [Cloud Natural Language API](https://cloud.google.com/natural-language/docs/analyzing-sentiment) to perform sentiment analysis to encourage us to be more positive in our writing.
-3. Use [Cloud Firestore](https://cloud.google.com/firestore/docs) to make a URL shortener.
-4. Use [Speech-to-text](https://cloud.google.com/speech-to-text/docs) to read a document or book.
+Call the API using postman or your preferred method;
 
-## What are we looking for?
+POST http://localhost:8080/overlay-emoji
+POST https://cloudrun1-195296148861.europe-west1.run.app/overlay-emoji
 
-We'll use the following rubric to evaluate your submission.
+Ensure that the form-data on the post endpoint is an image with the key 'image'
 
-1. Does the README contain instructions about what the API does, how to use it and what URL to find it at?
-2. Is the API simple and easy-to-use?
-3. Does the deployed service work as described in the README?
-4. Can I build and run the code locally within seconds or minutes of initial checkout?
-5. Did they use Cloud Build to build and deploy to the cloud? (Optional)
-6. Is the code clean, readable and well structured?
-7. Have they thought about testing? (Comprehensive tests are not expected but some consideration of testability would be nice to see.)
+When running locally, ensure that you have set the GOOGLE_APPLICATION_CREDENTIALS in terminal as follows:
+set GOOGLE_APPLICATION_CREDENTIALS="C:\path\to\your\service-account-file.json"
 
-## Are there any restrictions?
 
-Not really, go wild! 
-Feel free to add any dependencies you need (although we might ask you to justify your decisions at the interview stage). 
-Use AI coding tools (but be prepared to stand by the code you submit). 
-Spend as much or as little time as you want (we think that you should be able to achieve something cool in an hour or two and you might get penalised if we feel you've over engineered things.)
+# Details
+Google Cloud Build has been installed into the fork repo to allow CICD.
 
-## How do I submit the test?
+Cloud Run Details:
+Name: cloudrun1
+Region: europe-west1
+Endpoint URL: https://cloudrun1-195296148861.europe-west1.run.app
 
-Make a PR against this repo.
+## Packages
+Dependencies:
+- @google-cloud/vision (^4.3.2): Provides the Google Cloud Vision API client for detecting and analyzing images.
+- express (^4.21.2): A minimalist web framework for Node.js. 
+- multer (^1.4.5-lts.1): A middleware for handling multipart/form-data, used for uploading files in web applications (e.g., handling image or document uploads).
+- sharp (^0.33.5): A image processing library. It allows you to resize, crop, convert, and manipulate images efficiently.
 
-Feel free to contact the person who sent you this test if you have any questions at all. Good luck!
+DevDependencies:
+- nodemon (^3.1.9): Development tool that automatically restarts your Node.js application when file changes are detected.
+
+# To do
+- Extend postman testing suite
+- Automated testing with supertest
+- Error handling
+- Swagger documentation
+
+# Potential future features
+- Allow the user to choose the emoji
