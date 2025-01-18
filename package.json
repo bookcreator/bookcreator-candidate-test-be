@@ -1,0 +1,22 @@
+{
+  "name": "bookcreator-candidate-test",
+  "version": "1.0.0",
+  "description": "Emma Lane candidate test",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/vision": "^4.3.2",
+    "axios": "^1.7.9",
+    "express": "^4.21.2",
+    "path": "^0.12.7",
+    "sharp": "^0.33.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}

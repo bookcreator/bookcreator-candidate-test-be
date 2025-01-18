@@ -1,0 +1,46 @@
+{
+	"info": {
+		"_postman_id": "b60208e2-3fa0-486e-b99a-2ab2c1502bc0",
+		"name": "BookCreator",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "41240540"
+	},
+	"item": [
+		{
+			"name": "Localhost overlay-emoji",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"imageUrl\": \"https://media.istockphoto.com/id/904559680/photo/this-farm-is-my-pride-and-joy.jpg?s=612x612&w=is&k=20&c=OQi-2vLiEKnFlq0CPTH_WdwLJvPWpHCvv7D959XwoOQ=\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8080/overlay-emoji"
+			},
+			"response": []
+		},
+		{
+			"name": "Deployed overlay-emoji",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"imageUrl\": \"https://media.istockphoto.com/id/904559680/photo/this-farm-is-my-pride-and-joy.jpg?s=612x612&w=is&k=20&c=OQi-2vLiEKnFlq0CPTH_WdwLJvPWpHCvv7D959XwoOQ=\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://cloudrun1-195296148861.europe-west1.run.app/overlay-emoji"
+			},
+			"response": []
+		}
+	]
+}
