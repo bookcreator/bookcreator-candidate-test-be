@@ -1,5 +1,6 @@
 const { ImageAnnotatorClient } = require("@google-cloud/vision");
 const sharp = require("sharp");
+const axios = require("axios");
 
 const emojiPath = "assets/emoji.png";
 
