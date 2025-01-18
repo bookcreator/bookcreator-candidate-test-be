@@ -20,7 +20,11 @@ Call the API using postman or your preferred method;
 POST http://localhost:8080/overlay-emoji
 POST https://cloudrun1-195296148861.europe-west1.run.app/overlay-emoji
 
-Ensure that the form-data on the post endpoint is an image with the key 'image'
+The request format should be in this format:
+
+{
+"imageUrl": "https://example.com/path/to/image.jpg"
+}
 
 When running locally, ensure that you have set the GOOGLE_APPLICATION_CREDENTIALS in terminal as follows:
 set GOOGLE_APPLICATION_CREDENTIALS="C:\path\to\your\service-account-file.json"
@@ -40,7 +44,6 @@ Dependencies:
 
 - @google-cloud/vision (^4.3.2): Provides the Google Cloud Vision API client for detecting and analyzing images.
 - express (^4.21.2): A minimalist web framework for Node.js.
-- multer (^1.4.5-lts.1): A middleware for handling multipart/form-data, used for uploading files in web applications (e.g., handling image or document uploads).
 - path (^0.12.7): Allow us to work with file/directory paths
 - sharp (^0.33.5): A image processing library. It allows you to resize, crop, convert, and manipulate images efficiently.
 

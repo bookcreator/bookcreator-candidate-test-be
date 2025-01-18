@@ -1,24 +1,19 @@
 const express = require("express");
-const multer = require("multer");
 
 const { overlayEmoji } = require("./imageUtils"); // Import the function
 
 const app = express();
+// Middleware to parse incoming JSON request bodies
+app.use(express.json());
+
 const port = process.env.PORT || 8080;
 
-// Setup multer for handling file uploads
-const upload = multer({ dest: "uploads/" });
-
 // Endpoint to upload an image and overlay emoji
-app.post("/overlay-emoji", upload.single("image"), async (req, res) => {
-  console.log("File in request:", req.file); // Log the file data to check if it's being passed
+app.post("/overlay-emoji", async (req, res) => {
+  const { imageUrl } = req.body; // Expect the image URL in the request body
 
   try {
-    if (!req.file) {
-      throw new Error("No file uploaded");
-    }
-
-    const outputBuffer = await overlayEmoji(req.file.path);
+    const outputBuffer = await overlayEmoji(imageUrl);
 
     res.set("Content-Type", "image/jpeg");
     res.send(outputBuffer);
