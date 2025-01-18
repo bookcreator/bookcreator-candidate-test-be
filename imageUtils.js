@@ -25,9 +25,6 @@ async function overlayEmoji(imagePath) {
   // Load the original image
   let image = sharp(imageBuffer);
 
-  // Load the emoji image
-  await sharp(emojiPath).ensureAlpha().toBuffer();
-
   for (const face of faces) {
     const bbox = face.boundingPoly;
     const x1 = bbox.vertices[0].x;
@@ -41,7 +38,10 @@ async function overlayEmoji(imagePath) {
     const faceWidth = x2 - x1;
 
     // Resize emoji based on face width
-    const resizedEmoji = await sharp(emojiPath).resize(faceWidth).toBuffer();
+    const resizedEmoji = await sharp(emojiPath)
+      .ensureAlpha() //Ensure the png transparent background is honoured
+      .resize(faceWidth)
+      .toBuffer();
 
     // Position the emoji at the face center
     const emojiX = faceCenterX - faceWidth / 2;
@@ -53,7 +53,7 @@ async function overlayEmoji(imagePath) {
         input: resizedEmoji,
         top: Math.round(emojiY),
         left: Math.round(emojiX),
-        blend: "overlay",
+        blend: "over",
       },
     ]);
   }
