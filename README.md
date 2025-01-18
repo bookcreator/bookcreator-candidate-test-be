@@ -7,9 +7,10 @@ Using the Cloud Vision API face detection to overlay an emoji on a picture conta
 Install gcloud CLI (https://cloud.google.com/sdk/docs/install-sdk)
 Install Postman
 
-# Installation Instructions
+# Useful Commands
 
 npm install
+npm run dev
 
 # How to use
 
