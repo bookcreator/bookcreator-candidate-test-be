@@ -10,11 +10,19 @@ async function detectFaces(imagePath) {
 }
 
 async function overlayEmoji(imagePath) {
+  // Step 1: Download the image from the URL
+  const response = await axios({
+    url: imagePath,
+    responseType: "arraybuffer", // Ensure the image data is received as a buffer
+  });
+
+  const imageBuffer = Buffer.from(response.data);
+
   // Detect faces
   const faces = await detectFaces(imagePath);
 
   // Load the original image
-  let image = sharp(imagePath);
+  let image = sharp(imageBuffer);
 
   // Load the emoji image
   await sharp(emojiPath).ensureAlpha().toBuffer();

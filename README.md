@@ -44,6 +44,7 @@ Dependencies:
 
 - @google-cloud/vision (^4.3.2): Provides the Google Cloud Vision API client for detecting and analyzing images.
 - express (^4.21.2): A minimalist web framework for Node.js.
+- axios (^1.7.9)
 - path (^0.12.7): Allow us to work with file/directory paths
 - sharp (^0.33.5): A image processing library. It allows you to resize, crop, convert, and manipulate images efficiently.
 
