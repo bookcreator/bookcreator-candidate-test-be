@@ -53,7 +53,7 @@ async function overlayEmoji(imagePath) {
         input: resizedEmoji,
         top: Math.round(emojiY),
         left: Math.round(emojiX),
-        blend: "over",
+        blend: "overlay",
       },
     ]);
   }
