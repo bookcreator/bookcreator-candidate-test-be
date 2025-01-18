@@ -55,6 +55,7 @@ DevDependencies:
 
 # To do
 
+- Ensure .png transparency is fully honoured
 - Extend postman testing suite
 - Automated testing with supertest
 - Error handling
