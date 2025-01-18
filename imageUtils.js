@@ -10,6 +10,14 @@ async function detectFaces(imagePath) {
   return result.faceAnnotations;
 }
 
+async function calculatePosition(bbox, emojiWidth) {
+  const faceCenterX = (bbox[0].x + bbox[2].x) / 2;
+  const faceCenterY = (bbox[0].y + bbox[2].y) / 2;
+  const emojiX = faceCenterX - emojiWidth / 2;
+  const emojiY = faceCenterY - emojiWidth / 2;
+  return { x: emojiX, y: emojiY };
+}
+
 async function overlayEmoji(imagePath) {
   // Step 1: Download the image from the URL
   const response = await axios({
@@ -23,19 +31,13 @@ async function overlayEmoji(imagePath) {
   const faces = await detectFaces(imagePath);
 
   // Load the original image
-  let image = sharp(imageBuffer);
+  let image = sharp(imageBuffer)
+    .ensureAlpha() // Ensure the base image has an alpha channel (transparency)
+    .toBuffer();
 
   for (const face of faces) {
     const bbox = face.boundingPoly;
-    const x1 = bbox.vertices[0].x;
-    const y1 = bbox.vertices[0].y;
-    const x2 = bbox.vertices[2].x;
-    const y2 = bbox.vertices[2].y;
-
-    // Calculate face center and size
-    const faceCenterX = (x1 + x2) / 2;
-    const faceCenterY = (y1 + y2) / 2;
-    const faceWidth = x2 - x1;
+    const faceWidth = bbox.vertices[2].x - bbox.vertices[0].x;
 
     // Resize emoji based on face width
     const resizedEmoji = await sharp(emojiPath)
@@ -43,9 +45,11 @@ async function overlayEmoji(imagePath) {
       .resize(faceWidth)
       .toBuffer();
 
-    // Position the emoji at the face center
-    const emojiX = faceCenterX - faceWidth / 2;
-    const emojiY = faceCenterY - faceWidth / 2;
+    // Calculate position for emoji
+    const { x: emojiX, y: emojiY } = await calculatePosition(
+      bbox,
+      resizedEmoji.width
+    );
 
     // Overlay the emoji on the image
     image = image.composite([
