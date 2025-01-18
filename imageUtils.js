@@ -1,13 +1,15 @@
 const { ImageAnnotatorClient } = require("@google-cloud/vision");
 const sharp = require("sharp");
 
+const emojiPath = "assets/emoji.png";
+
 async function detectFaces(imagePath) {
   const client = new ImageAnnotatorClient();
   const [result] = await client.faceDetection(imagePath);
   return result.faceAnnotations;
 }
 
-async function overlayEmoji(imagePath, emojiPath) {
+async function overlayEmoji(imagePath) {
   // Detect faces
   const faces = await detectFaces(imagePath);
 
