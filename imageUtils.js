@@ -21,44 +21,52 @@ async function overlayEmoji(imagePath) {
 
   // Detect faces
   const faces = await detectFaces(imagePath);
-
-  // Load the original image
-  let image = sharp(imageBuffer).ensureAlpha(); // Ensure the base image has an alpha channel (transparency)
-  
-  for (const face of faces) {
-    const bbox = face.boundingPoly;
-    const x1 = bbox.vertices[0].x;
-    const y1 = bbox.vertices[0].y;
-    const x2 = bbox.vertices[2].x;
-    const y2 = bbox.vertices[2].y;
-
-    // Calculate face center and size
-    const faceCenterX = (x1 + x2) / 2;
-    const faceCenterY = (y1 + y2) / 2;
-    const faceWidth = x2 - x1;
-
-    // Resize emoji based on face width
-    const resizedEmoji = await sharp(emojiPath)
-      .ensureAlpha() //Ensure the png transparent background is honoured
-      .resize(faceWidth)
-      .toBuffer();
-
-    // Position the emoji at the face center
-    const emojiX = faceCenterX - faceWidth / 2;
-    const emojiY = faceCenterY - faceWidth / 2;
-
-    // Overlay the emoji on the image
-    image = image.composite([
-      {
-        input: resizedEmoji,
-        top: Math.round(emojiY),
-        left: Math.round(emojiX),
-        blend: "over",
-      },
-    ]);
+  if (faces.length === 0) {
+    throw new Error("No faces detected");
+  }
+  if (faces.length > 1) {
+    throw new Error("Too many faces detected");
   }
 
-  return image.toBuffer();
+  // Load the original image
+  const baseImageBuffer = await sharp(imageBuffer)
+    .ensureAlpha() // Ensure the base image has transparency
+    .toBuffer();
+
+  const bbox = faces[0].boundingPoly;
+  const x1 = bbox.vertices[0].x;
+  const y1 = bbox.vertices[0].y;
+  const x2 = bbox.vertices[2].x;
+  const y2 = bbox.vertices[2].y;
+
+  // Calculate face center and size
+  const faceCenterX = (x1 + x2) / 2;
+  const faceCenterY = (y1 + y2) / 2;
+  const faceWidth = x2 - x1;
+
+  // Resize emoji based on face width
+  const resizedEmojiBuffer = await sharp(emojiPath)
+    .resize(faceWidth)
+    .ensureAlpha() //Ensure the png transparent background is honoured
+    .toBuffer();
+
+  // Position the emoji at the face center
+  const emojiX = faceCenterX - faceWidth / 2;
+  const emojiY = faceCenterY - faceWidth / 2;
+
+  // Composite the emoji on top of the base image with transparency handling
+  const outputBuffer = await sharp(baseImageBuffer)
+    .composite([
+      {
+        input: resizedEmojiBuffer, // Emoji image buffer with transparency
+        top: Math.round(emojiY), // Y-position
+        left: Math.round(emojiX), // X-position
+        blend: "over", // Default blend mode (overlays with transparency)
+      },
+    ])
+    .toBuffer();
+
+  return outputBuffer; // Return the processed image buffer
 }
 
 // Export the async function for use in other files

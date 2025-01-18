@@ -63,3 +63,4 @@ DevDependencies:
 # Potential future features
 
 - Allow the user to choose the emoji
+- Extend to work for multiple faces
