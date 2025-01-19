@@ -50,3 +50,16 @@ gcloud projects add-iam-policy-binding photo-color-selector-project \
 ```bash 
 gcloud run deploy photo-color-selector --region europe-west1  --source .
 ```
+
+# Endpoints 
+
+### `POST /imageUrl` 
+
+example curl request: 
+```bash
+curl --location 'localhost:3000/imageUrl' \
+--header 'Content-Type: application/json' \
+--data '{
+    "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThM5eW3eQPlMNgZYECgp5gxDviNXtGBj_yxA&s"
+}'
+```
