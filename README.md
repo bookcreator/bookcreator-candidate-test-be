@@ -1,44 +1,90 @@
-# Book Creator Backend Engineer Candidate Technical Assessment
+# Little Links cloud functions
 
-The purpose of this test is mainly for us to get an idea of your technical capability. It will also serve as a starting point for discussions about how you think about and communicate the decisions you make when you write code, should you get through to the next stage.
+A simplified url shortening service taking advantage of cloud run functions for an extremely light weight implementation. Both functions are included in the same file to help with cognitive understanding and to share some of the lazy bootstrapping process but could easily be split if/when they grow.
 
-## What is the task?
+Another 'full service' example using NestJS is provided and is where more time is spent on concepts such as testing and architecture, but given the simple requirements this would be my first 'real' implementation
 
-Your task is to write and deploy a minimal but interesting service using [Google Cloud's free tier](https://cloud.google.com/free). The only requirements are that you must:
-1. deploy this service to [Cloud Run](https://cloud.google.com/run/docs); and
-2. use one other Google Cloud service from the [free tier list](https://cloud.google.com/free/docs/free-cloud-features#free-tier-usage-limits).
+## Request/Response diagram
+```mermaid
+sequenceDiagram
+    participant User as User
+    participant CreateFunction as createLittleLink Function
+    participant RetrieveFunction as retrieveLittleLink Function
+    participant Firestore as Firestore
 
-The easiest way to get going on this task will be to sign up for a Google Cloud free trial. This will require you to enter some billing details to confirm your identity. If you would rather not enter your billing details, or you have already used the Google Cloud free trial and your usage is beyond the free tier limits, then please email the person who sent you this test with details of a Google account that you control so that we can provision a project for you.
+    User->>CreateFunction: Sends POST request to /api/v1/little-link with URL
+    CreateFunction->>CreateFunction: Validates URL
+    CreateFunction->>Firestore: Queries Firestore for existing short link
+    Firestore->>CreateFunction: Returns document (exists or not)
+    CreateFunction->>CreateFunction: Generates short link
+    CreateFunction->>User: Sends response with short link or error
 
-This is an intentionally vague requirement - we're excited to see what you come up with. To kick start your thinking, here are some ideas. Feel free to pick one of these if your creative juices aren't flowing today.
+    User->>RetrieveFunction: Sends GET request to /api/v1/little-link/:id with short link ID
+    RetrieveFunction->>Firestore: Queries Firestore for original URL based on short link
+    Firestore->>RetrieveFunction: Returns document (URL data)
+    RetrieveFunction->>User: Redirects user to the original URL
+```
 
-Make an API that can:
-1. Use the [Cloud Vision API face detection](https://cloud.google.com/vision/docs/detecting-faces) to overlay an emoji on a picture containing a face.
-2. Use the [Cloud Natural Language API](https://cloud.google.com/natural-language/docs/analyzing-sentiment) to perform sentiment analysis to encourage us to be more positive in our writing.
-3. Use [Cloud Firestore](https://cloud.google.com/firestore/docs) to make a URL shortener.
-4. Use [Speech-to-text](https://cloud.google.com/speech-to-text/docs) to read a document or book.
+## Setup
 
-## What are we looking for?
+Run `npm install` and follow the below cloud CLI requirements.
 
-We'll use the following rubric to evaluate your submission.
+## Set up Google Cloud CLI
 
-1. Does the README contain instructions about what the API does, how to use it and what URL to find it at?
-2. Is the API simple and easy-to-use?
-3. Does the deployed service work as described in the README?
-4. Can I build and run the code locally within seconds or minutes of initial checkout?
-5. Did they use Cloud Build to build and deploy to the cloud? (Optional)
-6. Is the code clean, readable and well structured?
-7. Have they thought about testing? (Comprehensive tests are not expected but some consideration of testability would be nice to see.)
+This project takes full advantage of [Google Application Default Credentials](https://cloud.google.com/docs/authentication/provide-credentials-adc) for an extremely simple setup and is required to run it both locally and within Google Cloud Run. This means it will work within the project context when deployed to cloud run and also allow easy switching/authentication of google services when running locally.
 
-## Are there any restrictions?
+In order to use this effectively it is important to set up Google Cloud CLI by running `gcloud init` and selecting the correct account/project
 
-Not really, go wild! 
-Feel free to add any dependencies you need (although we might ask you to justify your decisions at the interview stage). 
-Use AI coding tools (but be prepared to stand by the code you submit). 
-Spend as much or as little time as you want (we think that you should be able to achieve something cool in an hour or two and you might get penalised if we feel you've over engineered things.)
+## Service requirements
 
-## How do I submit the test?
+The project being used must have enabled Firestore and have created at least one database. The `(default)` database is used by default but can be changed by using the ENV variable `FIRESTORE_DATABASE` from any source including a .env file.
 
-Make a PR against this repo.
+In order to confirm a database is created you can run `gcloud firestore databases list` after setting up the Google Cloud CLI. If there are no databases you can create the default database with `gcloud firestore databases create --location=eur3` or add a name via `gcloud firestore databases create --location=eur3 --database=<NAME>`
 
-Feel free to contact the person who sent you this test if you have any questions at all. Good luck!
+It's also required to have functions enabled, although you will be prompted to enable them if they are not already.
+
+In order to ensure the service works correctly it is <strong>required</strong> that both functions are deployed to the same region and the same project. This is achieved easily by setting the function region with the following command (europe-west is the example here)
+`gcloud config set functions/region europe-west1` 
+
+## Interacting with the service
+
+After deploying the service to the cloud you will see two URL's provided, one for each function. In order to interact with the API any client can be used, but a curl example is given below (make sure to update the <CREATE_URL>!)
+
+```bash
+$ curl --request POST \
+  --url <CREATE_URL> \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"url": "https://google.com"
+  }'
+```
+
+This will return
+
+```json
+{ "shortLink": "<SHORT_URL>" }
+```
+
+You can then open this link in a browser to be automatically redirected or use curl with/without redirects
+
+```bash
+# without following redirect
+curl <SHORT_URL>
+
+# response
+Found. Redirecting to https://google.com%
+
+# following redirect
+curl -L <SHORT_URL>
+
+# response is HTML for googles main page
+```
+
+## Linting
+
+Linting is availabile with `npm run lint`
+
+## Linting
+
+Testing is ran via jest with `npm run test`
+
